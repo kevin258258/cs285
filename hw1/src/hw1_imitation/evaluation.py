@@ -1,11 +1,14 @@
-"""Evaluation utilities for Push-T policies."""
+"""Push-T 策略的评估工具。"""
 
 from __future__ import annotations
 
+import copy
 import io
 import os
+import shutil
 import tempfile
 from pathlib import Path
+from typing import Any
 
 import gym_pusht  # noqa: F401
 import gymnasium as gym
@@ -13,20 +16,17 @@ import imageio.v2 as imageio
 import numpy as np
 import torch
 import wandb
-import shutil
 from PIL import Image
 
 from hw1_imitation.data import Normalizer
 from hw1_imitation.model import BasePolicy
-import copy
-from typing import Any
 
 ENV_ID = "gym_pusht/PushT-v0"
 NUM_EVAL_EPISODES = 100
 
 
 class Logger:
-    """Logger for logging metrics."""
+    """用于记录指标的日志器。"""
 
     CSV_DISALLOWED_TYPES = (wandb.Image, wandb.Video, wandb.Histogram)
 
@@ -127,33 +127,31 @@ def evaluate_policy(
     step: int,
     logger: Logger,
 ) -> None:
-    """Evaluate a policy in the Push-T environment and log results to Weights & Biases.
+    """在 Push-T 环境中评估策略，并将结果记录到 Weights & Biases。
 
-    This function runs a fixed number of evaluation episodes in the Push-T gym
-    environment using the provided policy. It normalizes observations with the
-    given normalizer, requests a chunk of actions from the policy (optionally
-    using multiple sampling steps for flow-based policies), and executes those
-    actions in the environment until each episode terminates.
+    该函数会在 Push-T gym 环境中，使用给定策略运行固定数量的评估回合。
+    它会用给定的 normalizer 对观测做归一化，从策略中请求一段动作序列
+    （对于 flow 策略可选地使用多步采样），并在环境中依次执行这些动作，
+    直到每个回合终止。
 
-    Metrics:
-        - Logs the mean of per-episode maximum reward.
-        - Optionally logs rendered rollout videos for the first
-          ``num_video_episodes`` episodes.
+    指标：
+        - 记录每个回合最大奖励的平均值。
+        - 可选地记录前 ``num_video_episodes`` 个回合的渲染视频。
 
-    Checkpointing:
-        - Saves the policy as a ``.pkl`` file and uploads it as a W&B artifact
-          tagged with the current training step.
+    检查点：
+        - 将策略保存为 ``.pkl`` 文件，并作为 W&B artifact 上传，
+          同时附带当前训练步数标签。
 
-    Args:
-        model: The policy to evaluate.
-        normalizer: Normalizer used to scale states and actions.
-        device: Device on which to run policy inference.
-        chunk_size: Number of actions to generate per policy call.
-        video_size: (width, height) for rendered rollout videos.
-        num_video_episodes: How many episodes to record videos for.
-        flow_num_steps: Number of denoising steps used by flow policies.
-        step: Training step used for logging and artifact metadata.
-        logger: Logger for logging metrics.
+    参数：
+        model: 要评估的策略。
+        normalizer: 用于缩放状态和动作的归一化器。
+        device: 执行策略推理所用的设备。
+        chunk_size: 每次调用策略时生成的动作数。
+        video_size: 渲染视频的 `(width, height)`。
+        num_video_episodes: 需要录制视频的回合数。
+        flow_num_steps: flow 策略使用的去噪步数。
+        step: 用于日志和 artifact 元数据的训练步数。
+        logger: 用于记录指标的日志器。
     """
     model.eval()
     rewards: list[float] = []

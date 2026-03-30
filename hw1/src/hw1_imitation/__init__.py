@@ -1,1 +1,1 @@
-"""Course package for hw1 imitation."""
+"""HW1 模仿学习课程包。"""

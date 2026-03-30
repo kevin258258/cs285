@@ -4,7 +4,6 @@ import modal
 
 from hw1_imitation.train import TrainConfig, parse_train_config, run_training
 
-
 APP_NAME = "hw1-imitation"
 NETRC_PATH = Path("~/.netrc").expanduser()
 PROJECT_DIR = "/root/project"
@@ -15,7 +14,7 @@ volume = modal.Volume.from_name("hw1-imitation-volume", create_if_missing=True)
 
 
 def load_gitignore_patterns() -> list[str]:
-    """Translate .gitignore entries into Modal ignore globs."""
+    """将 `.gitignore` 条目转换为 Modal 使用的忽略 glob 模式。"""
 
     if not modal.is_local():
         return []
@@ -39,7 +38,7 @@ def load_gitignore_patterns() -> list[str]:
     return patterns
 
 
-# Build a container image with the project's dependencies using uv.
+# 使用 uv 构建包含项目依赖的容器镜像。
 image = modal.Image.debian_slim().apt_install("libgl1", "libglib2.0-0").uv_sync()
 if NETRC_PATH.is_file():
     image = image.add_local_file(

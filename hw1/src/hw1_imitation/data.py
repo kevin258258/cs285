@@ -1,4 +1,4 @@
-"""Dataset utilities for Push-T."""
+"""Push-T 数据集工具。"""
 
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ ZARR_RELATIVE_PATH = Path("pusht") / "pusht_cchi_v7_replay.zarr"
 
 @dataclass(frozen=True)
 class Normalizer:
-    """Feature-wise normalizer for states and actions."""
+    """对状态和动作按特征维度进行归一化。"""
 
     state_mean: np.ndarray
     state_std: np.ndarray
@@ -48,9 +48,9 @@ class Normalizer:
 
 
 def download_pusht(dataset_dir: Path) -> Path:
-    """Download and extract the Push-T dataset if needed.
+    """在需要时下载并解压 Push-T 数据集。
 
-    Returns the path to the extracted Zarr dataset.
+    返回解压后 Zarr 数据集的路径。
     """
 
     dataset_dir.mkdir(parents=True, exist_ok=True)
@@ -88,7 +88,7 @@ def build_valid_indices(episode_ends: np.ndarray, chunk_size: int) -> np.ndarray
 
 
 class PushtChunkDataset(Dataset):
-    """Dataset of (state, action_chunk) pairs using a sliding window."""
+    """使用滑动窗口构建的 `(state, action_chunk)` 配对数据集。"""
 
     def __init__(
         self,
