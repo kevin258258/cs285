@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cs285-hw4-llm-rl"
+version = "0.1.0"
+description = "CS 285/185 HW4: single-GPU LoRA LLM RL training"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "modal>=1.0.0",
+  "pytest>=9.0.3",
+]
+
+[project.optional-dependencies]
+remote = [
+  "torch>=2.5",
+  "transformers>=4.45.0,<4.57.0",
+  "peft>=0.13.0",
+  "datasets>=2.19.0",
+  "tqdm>=4.66.0",
+  "wandb>=0.16.0",
+  "numpy<2.0",
+  "torchvision>=0.26.0",
+  "torchaudio>=2.11.0",
+]
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.setuptools.packages.find]
+include = ["hw4*"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+torchaudio = { index = "pytorch-cu128" }

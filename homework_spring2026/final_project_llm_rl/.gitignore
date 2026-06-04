@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+wandb/
+.vscode/
+.idea/
+.DS_Store
+
+# Dataset files (too large)
+dataset/
+public_eval/
